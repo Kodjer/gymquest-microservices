@@ -1,0 +1,59 @@
+// src/controllers/analyticsController.ts
+import { Request, Response } from 'express';
+import { supabaseRequest } from '../config/supabase';
+
+export const getGlobalStats = async (req: Request, res: Response) => {
+  try {
+    const players = await supabaseRequest('GET', 'players', null, '?select=*');
+    const quests = await supabaseRequest('GET', 'quests', null, '?select=*');
+    const userAchievements = await supabaseRequest('GET', 'user_achievements', null, '?select=*');
+    
+    const avgLevel = players && players.length > 0
+      ? players.reduce((sum: number, p: any) => sum + p.level, 0) / players.length
+      : 0;
+
+    res.json({
+      total_users: players?.length || 0,
+      total_quests: quests?.length || 0,
+      total_achievements_unlocked: userAchievements?.length || 0,
+      average_level: Math.round(avgLevel * 10) / 10,
+    });
+  } catch (error: any) {
+    console.error('Error in getGlobalStats:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUserActivity = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { days = 7 } = req.query;
+    
+    const cutoffDate = new Date(Date.now() - Number(days) * 24 * 60 * 60 * 1000).toISOString();
+    const quests = await supabaseRequest('GET', 'quests', null, `?user_id=eq.&created_at=gte.&select=created_at,status`);
+
+    const activity = quests?.reduce((acc: any, quest: any) => {
+      const date = quest.created_at.split('T')[0];
+      if (!acc[date]) acc[date] = { total: 0, completed: 0 };
+      acc[date].total++;
+      if (quest.status === 'done') acc[date].completed++;
+      return acc;
+    }, {});
+
+    res.json(activity || {});
+  } catch (error: any) {
+    console.error('Error in getUserActivity:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getTopPlayers = async (req: Request, res: Response) => {
+  try {
+    const { limit = 10 } = req.query;
+    const players = await supabaseRequest('GET', 'players', null, `?select=user_id,level,xp,total_quests_completed&order=xp.desc&limit=`);
+    res.json(players || []);
+  } catch (error: any) {
+    console.error('Error in getTopPlayers:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
