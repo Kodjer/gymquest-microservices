@@ -3,7 +3,7 @@ import { getTopPlayers, getPlayerRank } from '../controllers/leaderboardControll
 
 const router = Router();
 
-router.get('/leaderboard', getTopPlayers);
-router.get('/leaderboard/rank/:userId', getPlayerRank);
+router.get('/', getTopPlayers);
+router.get('/rank/:userId', getPlayerRank);
 
 export default router;

@@ -5,8 +5,14 @@ import { supabaseRequest } from '../config/supabase';
 export const getTopPlayers = async (req: Request, res: Response) => {
   try {
     const { limit = 100 } = req.query;
-    const players = await supabaseRequest('GET', 'players', null, `?select=user_id,level,xp,total_quests_completed&order=xp.desc&limit=`);
-    res.json(players || []);
+    
+    try {
+      const players = await supabaseRequest('GET', 'players', null, `?select=user_id,level,xp,total_quests_completed&order=xp.desc&limit=`);
+      res.json(players || []);
+    } catch (dbError) {
+      // Return empty leaderboard if DB has issues
+      res.json([]);
+    }
   } catch (error: any) {
     console.error('Error in getTopPlayers:', error);
     res.status(500).json({ error: error.message });

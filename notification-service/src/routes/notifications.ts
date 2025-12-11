@@ -3,8 +3,8 @@ import { getUserNotifications, createNotification, markAsRead } from '../control
 
 const router = Router();
 
-router.get('/notifications/:userId', getUserNotifications);
-router.post('/notifications', createNotification);
-router.patch('/notifications/:id/read', markAsRead);
+router.get('/:userId', getUserNotifications);
+router.post('/', createNotification);
+router.patch('/:id/read', markAsRead);
 
 export default router;
