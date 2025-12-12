@@ -1,0 +1,95 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: 
+          - quest-service
+          - player-service
+          - achievement-service
+          - analytics-service
+          - notification-service
+          - leaderboard-service
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: ${{ matrix.service }}/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./${{ matrix.service }}
+      run: npm ci
+    
+    - name: Run tests
+      working-directory: ./${{ matrix.service }}
+      run: npm test
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Quest Service
+      run: docker build -t quest-service:latest ./quest-service
+    
+    - name: Build Player Service
+      run: docker build -t player-service:latest ./player-service
+    
+    - name: Build Achievement Service
+      run: docker build -t achievement-service:latest ./achievement-service
+    
+    - name: Build Analytics Service
+      run: docker build -t analytics-service:latest ./analytics-service
+    
+    - name: Build Notification Service
+      run: docker build -t notification-service:latest ./notification-service
+    
+    - name: Build Leaderboard Service
+      run: docker build -t leaderboard-service:latest ./leaderboard-service
+    
+    - name: Test Docker Compose
+      run: |
+        docker-compose up -d
+        sleep 30
+        docker-compose ps
+        docker-compose down
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy notification
+      run: |
+        echo "✅ All tests passed!"
+        echo "✅ All services built successfully!"
+        echo "🚀 Ready for deployment"
