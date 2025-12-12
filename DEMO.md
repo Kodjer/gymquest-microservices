@@ -3,16 +3,19 @@
 ## Быстрый запуск для проверки
 
 ### 1. Запуск всех микросервисов
+
 ```powershell
 docker-compose up -d
 ```
 
 ### 2. Проверка здоровья сервисов
+
 ```powershell
 .\check-services.ps1
 ```
 
 ### 3. Тестирование функционала
+
 ```powershell
 .\demo-requests.ps1
 ```
@@ -22,6 +25,7 @@ docker-compose up -d
 ## Архитектура
 
 **6 микросервисов:**
+
 - ✅ Quest Service (3001) — управление квестами
 - ✅ Player Service (3002) — управление игроками
 - ✅ Achievement Service (3003) — достижения
@@ -36,6 +40,7 @@ docker-compose up -d
 ## Проверка каждого сервиса
 
 ### Quest Service (порт 3001)
+
 ```powershell
 # Health check
 curl http://localhost:3001/health
@@ -50,6 +55,7 @@ curl -X POST http://localhost:3001/api/quests `
 ```
 
 ### Player Service (порт 3002)
+
 ```powershell
 # Health check
 curl http://localhost:3002/health
@@ -64,6 +70,7 @@ curl -X POST http://localhost:3002/api/players `
 ```
 
 ### Achievement Service (порт 3003)
+
 ```powershell
 # Health check
 curl http://localhost:3003/health
@@ -73,6 +80,7 @@ curl http://localhost:3003/api/achievements
 ```
 
 ### Analytics Service (порт 3004)
+
 ```powershell
 # Health check
 curl http://localhost:3004/health
@@ -82,6 +90,7 @@ curl http://localhost:3004/api/analytics
 ```
 
 ### Notification Service (порт 3005)
+
 ```powershell
 # Health check
 curl http://localhost:3005/health
@@ -91,6 +100,7 @@ curl http://localhost:3005/api/notifications
 ```
 
 ### Leaderboard Service (порт 3006)
+
 ```powershell
 # Health check
 curl http://localhost:3006/health
@@ -123,26 +133,31 @@ cd achievement-service; npm test; cd ..
 ## Что реализовано
 
 ### ✅ Микросервисная архитектура
+
 - Каждый сервис — отдельный Docker контейнер
 - Независимая разработка и деплой
 - REST API для каждого сервиса
 
 ### ✅ База данных
+
 - Supabase (PostgreSQL)
 - Shared Database паттерн
 - Разные таблицы для каждого сервиса
 
 ### ✅ Контейнеризация
+
 - Dockerfile для каждого сервиса
 - Docker Compose для оркестрации
 - Изолированная сеть
 
 ### ✅ Тестирование
+
 - Jest для юнит-тестов
 - Моки для изоляции тестов
 - Покрытие основного функционала
 
 ### ✅ TypeScript
+
 - Типизация во всех сервисах
 - Модели данных
 - Контроллеры и роуты
@@ -163,6 +178,7 @@ gymquest-microservices/
 ```
 
 Каждый сервис содержит:
+
 - `src/` — исходный код
 - `__tests__/` — юнит-тесты
 - `Dockerfile` — контейнеризация

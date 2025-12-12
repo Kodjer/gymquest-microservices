@@ -1,9 +1,14 @@
-import { Router } from 'express';
-import { getTopPlayers, getPlayerRank } from '../controllers/leaderboardController';
+import { Router } from "express";
+import {
+  getTopPlayers,
+  getPlayerRank,
+  updatePlayerScore,
+} from "../controllers/leaderboardController";
 
 const router = Router();
 
-router.get('/', getTopPlayers);
-router.get('/rank/:userId', getPlayerRank);
+router.get("/", getTopPlayers);
+router.get("/rank/:userId", getPlayerRank);
+router.post("/update/:userId", updatePlayerScore);
 
 export default router;
