@@ -8,13 +8,19 @@ export const getGlobalStats = async (req: Request, res: Response) => {
     let players, quests, userAchievements;
 
     try {
-      players = await supabaseRequest("GET", "players", null, "?select=*");
-      quests = await supabaseRequest("GET", "quests", null, "?select=*");
+      // Оптимизированный запрос - берем только нужные поля, не все данные
+      players = await supabaseRequest(
+        "GET",
+        "players",
+        null,
+        "?select=id,level"
+      );
+      quests = await supabaseRequest("GET", "quests", null, "?select=id");
       userAchievements = await supabaseRequest(
         "GET",
         "user_achievements",
         null,
-        "?select=*"
+        "?select=id"
       );
     } catch (dbError: any) {
       // Return demo stats if DB has issues
@@ -30,7 +36,7 @@ export const getGlobalStats = async (req: Request, res: Response) => {
 
     const avgLevel =
       players && players.length > 0
-        ? players.reduce((sum: number, p: any) => sum + p.level, 0) /
+        ? players.reduce((sum: number, p: any) => sum + (p.level || 0), 0) /
           players.length
         : 0;
 
