@@ -11,11 +11,11 @@ export const getTopPlayers = async (req: Request, res: Response) => {
       null,
       "?select=player_id,username,score,rank&order=rank.asc&limit=10"
     );
-    
+
     if (!topPlayers || topPlayers.length === 0) {
       return res.json([]);
     }
-    
+
     res.json(topPlayers);
   } catch (error: any) {
     console.error("Error in getTopPlayers:", error);

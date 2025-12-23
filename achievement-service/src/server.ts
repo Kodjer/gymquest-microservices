@@ -1,8 +1,8 @@
 // src/server.ts
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import achievementRoutes from './routes/achievements';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import achievementRoutes from "./routes/achievements";
 
 dotenv.config();
 
@@ -12,17 +12,17 @@ const PORT = process.env.PORT || 3003;
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/achievements', achievementRoutes);
+app.use("/api/achievements", achievementRoutes);
 
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.json({
-    status: 'OK',
-    service: 'Achievement Service',
-    port: PORT
+    status: "OK",
+    service: "Achievement Service",
+    port: PORT,
   });
 });
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>

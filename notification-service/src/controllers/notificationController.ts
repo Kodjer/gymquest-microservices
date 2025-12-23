@@ -5,7 +5,7 @@ import { supabaseRequest } from "../config/supabase";
 export const getUserNotifications = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    
+
     // Получаем уведомления из БД
     const userNotifs = await supabaseRequest(
       "GET",
@@ -13,7 +13,7 @@ export const getUserNotifications = async (req: Request, res: Response) => {
       null,
       `?user_id=eq.${userId}&order=created_at.desc`
     );
-    
+
     res.json(userNotifs || []);
   } catch (error: any) {
     console.error("Error in getUserNotifications:", error);

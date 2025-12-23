@@ -29,6 +29,7 @@ curl http://localhost:3006/health  # Leaderboard Service
 ## API Endpoints для демонстрации
 
 ### Quest Service (Port 3001)
+
 ```bash
 # Создать квест
 curl -X POST http://localhost:3001/api/quests \
@@ -40,6 +41,7 @@ curl http://localhost:3001/api/quests/demo-123
 ```
 
 ### Player Service (Port 3002)
+
 ```bash
 # Создать игрока
 curl -X POST http://localhost:3002/api/players \
@@ -56,12 +58,14 @@ curl -X POST http://localhost:3002/api/players/player-123/xp \
 ```
 
 ### Achievement Service (Port 3003)
+
 ```bash
 # Получить достижения пользователя
 curl http://localhost:3003/api/achievements/demo-123
 ```
 
 ### Analytics Service (Port 3004)
+
 ```bash
 # Получить глобальную аналитику
 curl http://localhost:3004/api/analytics/global
@@ -71,6 +75,7 @@ curl http://localhost:3004/api/analytics/demo-123
 ```
 
 ### Notification Service (Port 3005)
+
 ```bash
 # Создать уведомление
 curl -X POST http://localhost:3005/api/notifications \
@@ -82,6 +87,7 @@ curl http://localhost:3005/api/notifications/demo-123
 ```
 
 ### Leaderboard Service (Port 3006)
+
 ```bash
 # Получить таблицу лидеров
 curl http://localhost:3006/api/leaderboard

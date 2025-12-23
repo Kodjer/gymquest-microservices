@@ -5,7 +5,7 @@ import { supabaseRequest } from "../config/supabase";
 export const getUserAchievements = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    
+
     // Получаем достижения с JOIN к таблице achievements для получения названий
     const userAchs = await supabaseRequest(
       "GET",
@@ -13,7 +13,7 @@ export const getUserAchievements = async (req: Request, res: Response) => {
       null,
       `?user_id=eq.${userId}&select=id,user_id,achievement_id,unlocked_at,achievements(name,description,icon,xp_reward)`
     );
-    
+
     res.json(userAchs || []);
   } catch (error: any) {
     console.error("Error in getUserAchievements:", error);
@@ -95,10 +95,10 @@ export const unlockAchievement = async (req: Request, res: Response) => {
 
     // Показываем что данные идут в БД (в реальности foreign key блокирует)
     // Для демо просто возвращаем данные
-    res.json({ 
+    res.json({
       message: "Achievement would be saved to database",
       data: result,
-      note: "Database has foreign key constraint - need to create achievement in 'achievements' table first"
+      note: "Database has foreign key constraint - need to create achievement in 'achievements' table first",
     });
   } catch (error: any) {
     console.error("Error in unlockAchievement:", error);

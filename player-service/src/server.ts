@@ -1,8 +1,8 @@
 // src/server.ts
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import playerRoutes from './routes/player';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import playerRoutes from "./routes/player";
 
 dotenv.config();
 
@@ -12,17 +12,17 @@ const PORT = process.env.PORT || 3002;
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/players', playerRoutes);
+app.use("/api/players", playerRoutes);
 
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.json({
-    status: 'OK',
-    service: 'Player Service',
-    port: PORT
+    status: "OK",
+    service: "Player Service",
+    port: PORT,
   });
 });
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>

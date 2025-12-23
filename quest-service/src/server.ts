@@ -1,8 +1,8 @@
 // src/server.ts
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import questRoutes from './routes/quests';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import questRoutes from "./routes/quests";
 
 dotenv.config();
 
@@ -12,17 +12,17 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/quests', questRoutes);
+app.use("/api/quests", questRoutes);
 
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.json({
-    status: 'OK',
-    service: 'Quest Service',
-    port: PORT
+    status: "OK",
+    service: "Quest Service",
+    port: PORT,
   });
 });
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>
