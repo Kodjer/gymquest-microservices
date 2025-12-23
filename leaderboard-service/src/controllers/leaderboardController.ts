@@ -2,13 +2,21 @@
 import { Request, Response } from "express";
 import { supabaseRequest } from "../config/supabase";
 
-// In-memory storage
-const players: any[] = [];
-
 export const getTopPlayers = async (req: Request, res: Response) => {
   try {
-    const sorted = [...players].sort((a, b) => b.xp - a.xp);
-    res.json(sorted);
+    // Получаем топ игроков из таблицы leaderboard
+    const topPlayers = await supabaseRequest(
+      "GET",
+      "leaderboard",
+      null,
+      "?select=player_id,username,score,rank&order=rank.asc&limit=10"
+    );
+    
+    if (!topPlayers || topPlayers.length === 0) {
+      return res.json([]);
+    }
+    
+    res.json(topPlayers);
   } catch (error: any) {
     console.error("Error in getTopPlayers:", error);
     res.status(500).json({ error: error.message });
@@ -18,25 +26,25 @@ export const getTopPlayers = async (req: Request, res: Response) => {
 export const getPlayerRank = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    console.log(`[DEBUG] Getting player rank for ID: ${userId}`);
 
-    const allPlayers = await supabaseRequest(
+    // Получаем игрока из leaderboard
+    const playerData = await supabaseRequest(
       "GET",
-      "players",
+      "leaderboard",
       null,
-      "?select=user_id,xp&order=xp.desc"
+      `?player_id=eq.${userId}&select=player_id,username,score,rank`
     );
 
-    if (!allPlayers) {
-      return res.status(404).json({ error: "Данные не найдены" });
-    }
+    console.log(`[DEBUG] Supabase returned:`, playerData);
 
-    const rank = allPlayers.findIndex((p: any) => p.user_id === userId) + 1;
-
-    if (rank === 0) {
+    if (!playerData || playerData.length === 0) {
+      console.log(`[DEBUG] Player not found in leaderboard`);
       return res.status(404).json({ error: "Игрок не найден" });
     }
 
-    res.json({ user_id: userId, rank, total_players: allPlayers.length });
+    console.log(`[DEBUG] Returning player:`, playerData[0]);
+    res.json(playerData[0]);
   } catch (error: any) {
     console.error("Error in getPlayerRank:", error);
     res.status(500).json({ error: error.message });
@@ -48,22 +56,15 @@ export const updatePlayerScore = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const { xp, level } = req.body;
 
-    const existing = players.findIndex((p) => p.user_id === userId);
+    // Обновляем игрока в базе данных
+    const result = await supabaseRequest(
+      "PATCH",
+      "players",
+      { xp, level },
+      `?id=eq.${userId}`
+    );
 
-    const result = {
-      user_id: userId,
-      xp: xp || 0,
-      level: level || 1,
-      updated_at: new Date().toISOString(),
-    };
-
-    if (existing >= 0) {
-      players[existing] = result;
-    } else {
-      players.push(result);
-    }
-
-    res.status(200).json(result);
+    res.status(200).json(result || { userId, xp, level });
   } catch (error: any) {
     console.error("Error in updatePlayerScore:", error);
     res.status(500).json({ error: error.message });

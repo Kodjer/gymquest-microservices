@@ -6,15 +6,23 @@ import { calculateLevel } from "../utils/levelCalculator";
 export const getPlayer = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    console.log(`[DEBUG] Getting player with ID: ${userId}`);
 
-    // Return mock player
-    res.json({
-      id: userId,
-      username: `Player${userId.slice(0, 4)}`,
-      level: 5,
-      xp: 500,
-      total_quests_completed: 10,
-    });
+    // Получаем игрока из Supabase
+    const players = await supabaseRequest(
+      "GET",
+      "players",
+      null,
+      `?id=eq.${userId}&select=*`
+    );
+
+    console.log(`[DEBUG] Supabase returned:`, JSON.stringify(players));
+
+    if (!players || players.length === 0) {
+      return res.status(404).json({ error: "Игрок не найден" });
+    }
+
+    res.json(players[0]);
   } catch (error: any) {
     console.error("Error in getPlayer:", error);
     res.status(500).json({ error: error.message });

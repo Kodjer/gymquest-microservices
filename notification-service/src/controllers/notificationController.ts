@@ -2,14 +2,19 @@
 import { Request, Response } from "express";
 import { supabaseRequest } from "../config/supabase";
 
-// In-memory storage
-const notifications: any[] = [];
-
 export const getUserNotifications = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const userNotifs = notifications.filter((n) => n.user_id === userId);
-    res.json(userNotifs);
+    
+    // Получаем уведомления из БД
+    const userNotifs = await supabaseRequest(
+      "GET",
+      "notifications",
+      null,
+      `?user_id=eq.${userId}&order=created_at.desc`
+    );
+    
+    res.json(userNotifs || []);
   } catch (error: any) {
     console.error("Error in getUserNotifications:", error);
     res.status(500).json({ error: error.message });
@@ -19,17 +24,22 @@ export const getUserNotifications = async (req: Request, res: Response) => {
 export const createNotification = async (req: Request, res: Response) => {
   try {
     const notificationData = {
-      id: "notif-" + Date.now(),
       user_id: req.body.user_id,
+      title: req.body.title || req.body.type || "Уведомление",
       message: req.body.message,
       type: req.body.type || "info",
-      is_read: false,
+      read: false,
       created_at: new Date().toISOString(),
     };
 
-    notifications.push(notificationData);
+    // Сохраняем в БД
+    const saved = await supabaseRequest(
+      "POST",
+      "notifications",
+      notificationData
+    );
 
-    res.status(201).json(notificationData);
+    res.status(201).json(saved || notificationData);
   } catch (error: any) {
     console.error("Error in createNotification:", error);
     res.status(500).json({ error: error.message });

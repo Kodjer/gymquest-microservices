@@ -88,6 +88,6 @@ jobs:
 
       - name: Deploy notification
         run: |
-          echo "✅ All tests passed!"
-          echo "✅ All services built successfully!"
-          echo "🚀 Ready for deployment"
+          echo "All tests passed!"
+          echo "All services built successfully!"
+          echo "Ready for deployment"

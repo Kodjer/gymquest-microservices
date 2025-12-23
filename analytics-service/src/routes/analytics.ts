@@ -10,6 +10,7 @@ const router = Router();
 
 router.get("/global", getGlobalStats);
 router.get("/activity/:userId", getUserActivity);
+router.get("/:userId", getUserActivity); // Добавляем короткий роут
 router.get("/top", getTopPlayers);
 router.post("/event", recordEvent);
 
